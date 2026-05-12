@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MegazoneCloud 마케팅 온보딩 플랫폼</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-left p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .language-selector {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 12px;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-description {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .stat-card button {
+            margin-top: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .stat-card button:hover {
+            background: #2563eb;
+        }
+
+        .chart-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+        }
+
+        .weeks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .week-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .week-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .week-card.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .week-card h3 {
+            color: #1f2937;
+            font-size: 16px;
+            margin-bottom: 0.5rem;
+        }
+
+        .week-card p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 1rem;
+        }
+
+        .week-progress {
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .missions-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .mission-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .mission-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .mission-item input[type="checkbox"]:checked + .mission-content p {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .mission-content {
+            flex: 1;
+        }
+
+        .mission-content p {
+            margin: 0;
+            color: #1f2937;
+            transition: all 0.2s;
+        }
+
+        .mission-time {
+            background: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .team-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-card h3 {
+            font-size: 16px;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .team-card p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .value-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .value-card h3 {
+            color: #1f2937;
+            font-size: 16px;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .value-card p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .success-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .success-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .success-section li {
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .success-section li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            min-width: 150px;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: white;
+            transition: all 0.2s;
+        }
+
+        .mentor-btn {
+            background: #3b82f6;
+        }
+
+        .mentor-btn:hover {
+            background: #2563eb;
+        }
+
+        .feedback-btn {
+            background: #8b5cf6;
+        }
+
+        .feedback-btn:hover {
+            background: #7c3aed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+
+        .mentor-option {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+        }
+
+        .mentor-option:hover {
+            background: #f3f4f6;
+            border-color: #3b82f6;
+        }
+
+        .mentor-option-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .mentor-option-role {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-submit {
+            background: #10b981;
+            color: white;
+        }
+
+        .modal-submit:hover {
+            background: #059669;
+        }
+
+        .modal-cancel {
+            background: #f3f4f6;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+        }
+
+        .modal-cancel:hover {
+            background: #e5e7eb;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .weeks-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1>MegazoneCloud 마케팅 온보딩</h1>
+                <p>고객 임팩트를 만드는 팀에 오신 것을 환영합니다</p>
+            </div>
+            <select class="language-selector" id="languageSelector">
+                <option value="ko">한국어</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div class="chart-section">
+            <h2 class="section-title" id="progressChartTitle">진행 상황</h2>
+            <canvas id="progressChart"></canvas>
+        </div>
+
+        <h2 class="section-title" id="curriculumTitle" style="margin-top: 2rem;">커리큘럼</h2>
+        <div class="weeks-grid" id="weeksGrid"></div>
+
+        <div class="missions-section">
+            <h2 class="section-title" id="missionsTitle">1주차 미션</h2>
+            <div id="missionsList"></div>
+        </div>
+
+        <h2 class="section-title" id="teamsTitle">팀 소개</h2>
+        <div class="teams-grid" id="teamsGrid"></div>
+
+        <h2 class="section-title" id="valuesTitle">핵심 가치관</h2>
+        <div class="values-grid" id="valuesGrid"></div>
+
+        <div class="success-section">
+            <h2 class="section-title" id="successTitle">성공의 정의</h2>
+            <ul id="successList"></ul>
+        </div>
+
+        <div class="action-buttons">
+            <button class="mentor-btn" onclick="openMentorModal()" id="mentorBtn">멘토 선택</button>
+            <button class="feedback-btn" onclick="openFeedbackModal()" id="feedbackBtn">피드백 보내기</button>
+        </div>
+    </div>
+
+    <div class="modal" id="mentorModal">
+        <div class="modal-content">
+            <h2 id="mentorModalTitle">멘토 선택</h2>
+            <div id="mentorList"></div>
+            <button class="modal-cancel" onclick="closeMentorModal()" style="width: 100%; margin-top: 1rem;" id="mentorCancelBtn">취소</button>
+        </div>
+    </div>
+
+    <div class="modal" id="feedbackModal">
+        <div class="modal-content">
+            <h2 id="feedbackModalTitle">Feedback 제출</h2>
+            <textarea class="modal-textarea" id="feedbackText" placeholder="피드백을 입력하세요..."></textarea>
+            <div class="modal-buttons">
+                <button class="modal-submit" onclick="submitFeedback()" id="feedbackSubmitBtn">전송</button>
+                <button class="modal-cancel" onclick="closeFeedbackModal()" id="feedbackCancelBtn">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const content = {
+            ko: {
+                title: 'MegazoneCloud 마케팅 온보딩',
+                subtitle: '고객 임팩트를 만드는 팀에 오신 것을 환영합니다',
+                progressChartTitle: '진행 상황',
+                curriculumTitle: '커리큘럼',
+                missionsTitle: (week) => `${week}주차 미션`,
+                teamsTitle: '팀 소개',
+                valuesTitle: '핵심 가치관',
+                successTitle: '성공의 정의',
+                mentorBtn: '멘토 선택',
+                feedbackBtn: '피드백 보내기',
+                mentorModalTitle: '멘토 선택',
+                feedbackModalTitle: 'feedback 제출',
+                mentorCancelBtn: '취소',
+                feedbackSubmitBtn: '전송',
+                feedbackCancelBtn: '취소',
+                feedbackPlaceholder: '피드백을 입력하세요...',
+                progress: '진행률',
+                completed: '완료',
+                currentWeek: '현재 주차',
+                mentor: '멘토',
+                notAssigned: '미배정',
+                week: (n) => `${n}주차`,
+                completed_count: '완료',
+                weeks: {
+                    1: { title: '기반 다지기 (Foundation)', desc: '회사, 마케팅 팀, 우리의 전략을 이해하기' },
+                    2: { title: '조직 이해하기 (Organization)', desc: '마케팅 팀별 역할과 주요 활동을 이해하기' },
+                    3: { title: '전략 이해하기 (Strategy)', desc: '2025 마케팅 전략과 클라우드 생태계를 이해하기' },
+                    4: { title: '통합 & 첫 프로젝트 (Integration)', desc: '첫 프로젝트를 시작하고 30-60-90일 계획 수립' }
+                },
+                missions: {
+                    1: [
+                        { id: '1-1', title: 'Welcome Deck 읽기', time: '30분' },
+                        { id: '1-2', title: '회사 소개 세션 (CEO/HR)', time: '30분' },
+                        { id: '1-3', title: '마케팅 팀 오리엔테이션', time: '30분' },
+                        { id: '1-4', title: '1:1 멘토 미팅 시작', time: '30분' },
+                        { id: '1-5', title: '마케팅 용어사전 학습', time: '30분' },
+                        { id: '1-6', title: '커뮤니케이션 도구 설정', time: '30분' }
+                    ],
+                    2: [
+                        { id: '2-1', title: 'Strategy&Ops 팀 브리핑', time: '30분' },
+                        { id: '2-2', title: 'Brand & Content 팀 브리핑', time: '30분' },
+                        { id: '2-3', title: 'PMM 팀 브리핑', time: '30분' },
+                        { id: '2-4', title: 'Field&Event 팀 브리핑', time: '30분' },
+                        { id: '2-5', title: 'Digital Performance 팀 브리핑', time: '30분' },
+                        { id: '2-6', title: '주간 회의 관찰 (All Hands)', time: '90분' },
+                        { id: '2-7', title: '마케팅 대시보드 학습', time: '30분' },
+                        { id: '2-8', title: '멘토 체크-인', time: '30분' }
+                    ],
+                    3: [
+                        { id: '3-1', title: '"AI Native Company" 포지셔닝 학습', time: '30분' },
+                        { id: '3-2', title: '2025 마케팅 전략 문서 읽기', time: '30분' },
+                        { id: '3-3', title: '클라우드 생태계 & 파트너 전략 101', time: '30분' },
+                        { id: '3-4', title: '주요 고객사 사례 학습', time: '30분' },
+                        { id: '3-5', title: '제품별 전략 이해 (AI, Space)', time: '30분' },
+                        { id: '3-6', title: 'CMO와 전략 대화', time: '30분' },
+                        { id: '3-7', title: '멘토 체크-인', time: '30분' }
+                    ],
+                    4: [
+                        { id: '4-1', title: '첫 프로젝트 할당 & 킥오프', time: '60분' },
+                        { id: '4-2', title: '팀 문화 세션', time: '30분' },
+                        { id: '4-3', title: '헤일리님과의 1:1 미팅', time: '15분' },
+                        { id: '4-4', title: '30-60-90일 개발 계획 작성', time: '60분' },
+                        { id: '4-5', title: '월간 All-Hands 참석', time: '120분' },
+                        { id: '4-6', title: '온보딩 완료 1:1 (멘토)', time: '60분' }
+                    ]
+                },
+                mentors: [
+                    { name: 'Eumenes Sung (성무경)', role: 'Marketing Unit Leader', team: 'Strategy & Ops' },
+                    { name: 'Hayley Chung (정혜인)', role: 'CMO', team: 'Leadership' },
+                    { name: 'Brand & Content Lead', role: 'Team Lead', team: 'Brand & Content' },
+                    { name: 'PMM Team Lead', role: 'Team Lead', team: 'PMM' }
+                ],
+                teams: [
+                    { name: 'Strategy & Ops', desc: '마케팅 전체 전략, 데이터 기반 의사결정, 효율적 운영', color: '#3b82f6' },
+                    { name: 'Brand & Content', desc: '브랜드 정체성, Thought Leadership 콘텐츠', color: '#8b5cf6' },
+                    { name: 'PMM', desc: '제품 포지셔닝, GTM 전략, 세일즈 협력', color: '#ec4899' },
+                    { name: 'Field & Event', desc: '이벤트, 필드 마케팅, 파트너십, 리드 전환', color: '#f59e0b' },
+                    { name: 'Digital Performance', desc: '디지털 채널 리드 생성, ISV 생태계 개발', color: '#10b981' },
+                    { name: 'Creative Studio', desc: '브랜드 비주얼, 마케팅 콜라테럴 디자인', color: '#06b6d4' },
+                    { name: 'Video Lab', desc: '제품 데모, 고객 성공 사례, 영상 콘텐츠', color: '#ef4444' }
+                ],
+                values: [
+                    { title: '명확성', desc: '누가, 뭘, 언제까지 하는지 항상 투명' },
+                    { title: '소유권', desc: '"내 담당"이라면 끝까지 책임' },
+                    { title: '고객 중심', desc: '자사 이익보다 고객 가치를 먼저' },
+                    { title: '측정 가능성', desc: '데이터로 말하기' },
+                    { title: '시간 존중', desc: '불필요한 미팅 없기' }
+                ],
+                success: [
+                    '월간 30+ 우량 엔터프라이즈 리드 생성',
+                    '8개 전략적 파트너십 신규 계약',
+                    '파이프라인 40% 기여, $5M+ 영향 수익',
+                    '고객이 우리를 AI 혁신 파트너로 인식'
+                ]
+            },
+            en: {
+                title: 'MegazoneCloud Marketing Onboarding',
+                subtitle: 'Welcome to our team building customer impact',
+                progressChartTitle: 'Progress Chart',
+                curriculumTitle: 'Curriculum',
+                missionsTitle: (week) => `Week ${week} Missions`,
+                teamsTitle: 'Teams',
+                valuesTitle: 'Core Values',
+                successTitle: 'Success Metrics',
+                mentorBtn: 'Select Mentor',
+                feedbackBtn: 'Send Feedback',
+                mentorModalTitle: 'Select a Mentor',
+                feedbackModalTitle: 'Send Feedback',
+                mentorCancelBtn: 'Cancel',
+                feedbackSubmitBtn: 'Submit',
+                feedbackCancelBtn: 'Cancel',
+                feedbackPlaceholder: 'Enter your feedback...',
+                progress: 'Progress',
+                completed: 'Completed',
+                currentWeek: 'Current Week',
+                mentor: 'Mentor',
+                notAssigned: 'Not assigned',
+                week: (n) => `Week ${n}`,
+                completed_count: 'completed',
+                weeks: {
+                    1: { title: 'Build Your Foundation', desc: 'Understand the company, marketing team, and core strategy' },
+                    2: { title: 'Understand the Org & Strategy', desc: 'Learn each team\'s role and key activities' },
+                    3: { title: 'Master the Strategy', desc: 'Deep dive into 2025 marketing strategy and cloud ecosystem' },
+                    4: { title: 'Integrate & Launch', desc: 'Start your first project and create 30-60-90 day plan' }
+                },
+                missions: {
+                    1: [
+                        { id: '1-1', title: 'Read Welcome Deck', time: '30 min' },
+                        { id: '1-2', title: 'Company Intro Session (CEO/HR)', time: '30 min' },
+                        { id: '1-3', title: 'Marketing Team Orientation', time: '30 min' },
+                        { id: '1-4', title: 'Start 1:1 Mentor Meeting', time: '30 min' },
+                        { id: '1-5', title: 'Learn Marketing Glossary', time: '30 min' },
+                        { id: '1-6', title: 'Setup Communication Tools', time: '30 min' }
+                    ],
+                    2: [
+                        { id: '2-1', title: 'Strategy & Ops Team Briefing', time: '30 min' },
+                        { id: '2-2', title: 'Brand & Content Team Briefing', time: '30 min' },
+                        { id: '2-3', title: 'PMM Team Briefing', time: '30 min' },
+                        { id: '2-4', title: 'Field & Event Team Briefing', time: '30 min' },
+                        { id: '2-5', title: 'Digital Performance Team Briefing', time: '30 min' },
+                        { id: '2-6', title: 'Observe Weekly Meetings', time: '90 min' },
+                        { id: '2-7', title: 'Learn Marketing Dashboard', time: '30 min' },
+                        { id: '2-8', title: 'Mentor Check-in', time: '30 min' }
+                    ],
+                    3: [
+                        { id: '3-1', title: '"AI Native Company" Positioning', time: '30 min' },
+                        { id: '3-2', title: 'Read 2025 Marketing Strategy', time: '30 min' },
+                        { id: '3-3', title: 'Cloud Ecosystem & Partner Strategy 101', time: '30 min' },
+                        { id: '3-4', title: 'Study Key Customer Cases', time: '30 min' },
+                        { id: '3-5', title: 'Understand Product Strategy (AI, Space)', time: '30 min' },
+                        { id: '3-6', title: 'Strategy Conversation with CMO', time: '30 min' },
+                        { id: '3-7', title: 'Mentor Check-in', time: '30 min' }
+                    ],
+                    4: [
+                        { id: '4-1', title: 'First Project Kickoff', time: '60 min' },
+                        { id: '4-2', title: 'Team Culture Session', time: '30 min' },
+                        { id: '4-3', title: '1:1 with Haley', time: '15 min' },
+                        { id: '4-4', title: 'Create 30-60-90 Day Plan', time: '60 min' },
+                        { id: '4-5', title: 'Attend Monthly All-Hands', time: '120 min' },
+                        { id: '4-6', title: 'Onboarding Completion 1:1 (Mentor)', time: '60 min' }
+                    ]
+                },
+                mentors: [
+                    { name: 'Eumenes Sung', role: 'Marketing Unit Leader', team: 'Strategy & Ops' },
+                    { name: 'Hayley Chung', role: 'CMO', team: 'Leadership' },
+                    { name: 'Brand & Content Lead', role: 'Team Lead', team: 'Brand & Content' },
+                    { name: 'PMM Team Lead', role: 'Team Lead', team: 'PMM' }
+                ],
+                teams: [
+                    { name: 'Strategy & Ops', desc: 'Overall marketing strategy, data-driven decisions, efficient operations', color: '#3b82f6' },
+                    { name: 'Brand & Content', desc: 'Brand identity, thought leadership content', color: '#8b5cf6' },
+                    { name: 'PMM', desc: 'Product positioning, GTM strategy, sales alignment', color: '#ec4899' },
+                    { name: 'Field & Event', desc: 'Events, field marketing, partnerships, lead conversion', color: '#f59e0b' },
+                    { name: 'Digital Performance', desc: 'Digital channel lead generation, ISV ecosystem', color: '#10b981' },
+                    { name: 'Creative Studio', desc: 'Brand visuals, marketing collateral design', color: '#06b6d4' },
+                    { name: 'Video Lab', desc: 'Product demos, customer stories, video content', color: '#ef4444' }
+                ],
+                values: [
+                    { title: 'Clarity', desc: 'Always transparent about who, what, and when' },
+                    { title: 'Ownership', desc: 'If it\'s yours, own the outcome fully' },
+                    { title: 'Customer-First', desc: 'Customer value before internal interests' },
+                    { title: 'Measurability', desc: 'Speak with data, not instinct' },
+                    { title: 'Respect Time', desc: 'No unnecessary meetings' }
+                ],
+                success: [
+                    '30+ qualified enterprise leads per month',
+                    '8 new strategic partnerships signed',
+                    '40% pipeline contribution, $5M+ influenced revenue',
+                    'Recognized as customer\'s AI innovation partner'
+                ]
+            }
+        };
+
+        let language = 'ko';
+        let currentWeek = 1;
+        let selectedMentor = null;
+        let progress = {};
+        let progressChart = null;
+
+        function loadProgress() {
+            const saved = localStorage.getItem('onboarding-progress');
+            if (saved) {
+                progress = JSON.parse(saved);
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('onboarding-progress', JSON.stringify(progress));
+        }
+
+        function getStats() {
+            let total = 0, completed = 0;
+            for (let week = 1; week <= 4; week++) {
+                content.ko.missions[week].forEach(mission => {
+                    total++;
+                    if (progress[mission.id]) completed++;
+                });
+            }
+            return { total, completed, percentage: Math.round((completed / total) * 100) };
+        }
+
+        function renderStats() {
+            const t = content[language];
+            const stats = getStats();
+            const html = `
+                <div class="stat-card">
+                    <div class="stat-label">${t.progress}</div>
+                    <div class="stat-value">${stats.percentage}%</div>
+                    <div class="stat-description">${stats.completed} / ${stats.total} ${t.completed}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">${t.currentWeek}</div>
+                    <div class="stat-value">${currentWeek}</div>
+                    <div class="stat-description">${t.weeks[currentWeek].title}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">${t.mentor}</div>
+                    <div class="stat-value" style="font-size: 16px;">${selectedMentor ? selectedMentor.name : t.notAssigned}</div>
+                    <button onclick="openMentorModal()">${t.mentorBtn}</button>
+                </div>
+            `;
+            document.getElementById('statsGrid').innerHTML = html;
+        }
+
+        function renderWeeks() {
+            const t = content[language];
+            let html = '';
+            for (let week = 1; week <= 4; week++) {
+                const missions = t.missions[week];
+                const completed = missions.filter(m => progress[m.id]).length;
+                html += `
+                    <div class="week-card ${currentWeek === week ? 'active' : ''}" onclick="changeWeek(${week})">
+                        <h3>${t.week(week)}</h3>
+                        <p>${t.weeks[week].title}</p>
+                        <div class="week-progress">${completed} / ${missions.length} ${t.completed_count}</div>
+                    </div>
+                `;
+            }
+            document.getElementById('weeksGrid').innerHTML = html;
+        }
+
+        function renderMissions() {
+            const t = content[language];
+            const missions = t.missions[currentWeek];
+            let html = '';
+            missions.forEach(mission => {
+                const isChecked = progress[mission.id];
+                html += `
+                    <div class="mission-item">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleMission('${mission.id}')">
+                        <div class="mission-content">
+                            <p>${mission.title}</p>
+                        </div>
+                        <span class="mission-time">${mission.time}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('missionsList').innerHTML = html;
+            document.getElementById('missionsTitle').innerText = t.missionsTitle(currentWeek);
+        }
+
+        function renderTeams() {
+            const t = content[language];
+            let html = '';
+            t.teams.forEach(team => {
+                html += `
+                    <div class="team-card" style="border-left-color: ${team.color}">
+                        <h3 style="color: ${team.color}">${team.name}</h3>
+                        <p>${team.desc}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('teamsGrid').innerHTML = html;
+        }
+
+        function renderValues() {
+            const t = content[language];
+            let html = '';
+            t.values.forEach(value => {
+                html += `
+                    <div class="value-card">
+                        <h3>${value.title}</h3>
+                        <p>${value.desc}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('valuesGrid').innerHTML = html;
+        }
+
+        function renderSuccess() {
+            const t = content[language];
+            let html = '';
+            t.success.forEach(item => {
+                html += `<li>${item}</li>`;
+            });
+            document.getElementById('successList').innerHTML = html;
+        }
+
+        function updateChart() {
+            const data = [];
+            for (let week = 1; week <= 4; week++) {
+                const missions = content.ko.missions[week];
+                const completed = missions.filter(m => progress[m.id]).length;
+                data.push({
+                    week: `Week ${week}`,
+                    completed: completed,
+                    total: missions.length - completed
+                });
+            }
+
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            if (progressChart) progressChart.destroy();
+            
+            progressChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.week),
+                    datasets: [
+                        {
+                            label: language === 'ko' ? '완료' : 'Completed',
+                            data: data.map(d => d.completed),
+                            backgroundColor: '#3b82f6'
+                        },
+                        {
+                            label: language === 'ko' ? '진행중' : 'Pending',
+                            data: data.map(d => d.total),
+                            backgroundColor: '#e5e7eb'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true }
+                    },
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true }
+                    }
+                }
+            });
+        }
+
+        function changeLanguage(lang) {
+            language = lang;
+            render();
+        }
+
+        function changeWeek(week) {
+            currentWeek = week;
+            render();
+        }
+
+        function toggleMission(id) {
+            progress[id] = !progress[id];
+            saveProgress();
+            render();
+        }
+
+        function openMentorModal() {
+            const t = content[language];
+            let html = '';
+            t.mentors.forEach((mentor, idx) => {
+                html += `
+                    <div class="mentor-option" onclick="selectMentor(${idx})">
+                        <div class="mentor-option-name">${mentor.name}</div>
+                        <div class="mentor-option-role">${mentor.role} • ${mentor.team}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('mentorList').innerHTML = html;
+            document.getElementById('mentorModal').classList.add('active');
+        }
+
+        function closeMentorModal() {
+            document.getElementById('mentorModal').classList.remove('active');
+        }
+
+        function selectMentor(idx) {
+            selectedMentor = content[language].mentors[idx];
+            closeMentorModal();
+            renderStats();
+        }
+
+        function openFeedbackModal() {
+            const t = content[language];
+            document.getElementById('feedbackText').placeholder = t.feedbackPlaceholder;
+            document.getElementById('feedbackModal').classList.add('active');
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').classList.remove('active');
+        }
+
+        function submitFeedback() {
+            const feedback = document.getElementById('feedbackText').value;
+            if (feedback.trim()) {
+                alert(language === 'ko' ? '피드백이 전송되었습니다!' : 'Feedback submitted!');
+                document.getElementById('feedbackText').value = '';
+                closeFeedbackModal();
+            }
+        }
+
+        function updateLabels() {
+            const t = content[language];
+            document.getElementById('progressChartTitle').innerText = t.progressChartTitle;
+            document.getElementById('curriculumTitle').innerText = t.curriculumTitle;
+            document.getElementById('teamsTitle').innerText = t.teamsTitle;
+            document.getElementById('valuesTitle').innerText = t.valuesTitle;
+            document.getElementById('successTitle').innerText = t.successTitle;
+            document.getElementById('mentorBtn').innerText = t.mentorBtn;
+            document.getElementById('feedbackBtn').innerText = t.feedbackBtn;
+            document.getElementById('mentorModalTitle').innerText = t.mentorModalTitle;
+            document.getElementById('feedbackModalTitle').innerText = t.feedbackModalTitle;
+            document.getElementById('mentorCancelBtn').innerText = t.mentorCancelBtn;
+            document.getElementById('feedbackSubmitBtn').innerText = t.feedbackSubmitBtn;
+            document.getElementById('feedbackCancelBtn').innerText = t.feedbackCancelBtn;
+        }
+
+        function render() {
+            updateLabels();
+            renderStats();
+            renderWeeks();
+            renderMissions();
+            renderTeams();
+            renderValues();
+            renderSuccess();
+            updateChart();
+        }
+
+        document.getElementById('languageSelector').addEventListener('change', (e) => {
+            changeLanguage(e.target.value);
+        });
+
+        loadProgress();
+        render();
+    </script>
+</body>
+</html>
