@@ -217,9 +217,21 @@
 
         .teams-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 1rem;
             margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1200px) {
+            .teams-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .teams-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .team-card {
@@ -458,6 +470,43 @@
                 flex-direction: column;
             }
         }
+
+        .feedback-form {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-input textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
     </style>
 </head>
 <body>
@@ -516,7 +565,30 @@
     <div class="modal" id="feedbackModal">
         <div class="modal-content">
             <h2 id="feedbackModalTitle">Feedback 제출</h2>
-            <textarea class="modal-textarea" id="feedbackText" placeholder="피드백을 입력하세요..."></textarea>
+            <div class="feedback-form">
+                <div class="form-group">
+                    <label for="feedbackName" id="feedbackNameLabel">이름</label>
+                    <input type="text" id="feedbackName" class="form-input" placeholder="이름을 입력하세요...">
+                </div>
+                <div class="form-group">
+                    <label for="feedbackEmail" id="feedbackEmailLabel">이메일</label>
+                    <input type="email" id="feedbackEmail" class="form-input" placeholder="이메일을 입력하세요...">
+                </div>
+                <div class="form-group">
+                    <label for="feedbackMentor" id="feedbackMentorLabel">멘토</label>
+                    <select id="feedbackMentor" class="form-input">
+                        <option value="">선택안함</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="feedbackText" id="feedbackContentLabel">피드백 내용</label>
+                    <textarea class="modal-textarea" id="feedbackText" placeholder="피드백을 입력하세요..."></textarea>
+                </div>
+                <div style="display: none;" id="feedbackSubmitting">
+                    <p style="text-align: center; color: #6b7280; font-size: 14px;">제출 중...</p>
+                </div>
+                <div style="display: none;" id="feedbackError" style="color: #dc2626; font-size: 14px; margin-bottom: 1rem; padding: 0.75rem; background: #fee2e2; border-radius: 6px;"></div>
+            </div>
             <div class="modal-buttons">
                 <button class="modal-submit" onclick="submitFeedback()" id="feedbackSubmitBtn">전송</button>
                 <button class="modal-cancel" onclick="closeFeedbackModal()" id="feedbackCancelBtn">취소</button>
@@ -569,11 +641,12 @@
                         { id: '2-1', title: 'Strategy&Ops 팀 브리핑', time: '30분' },
                         { id: '2-2', title: 'Brand & Content 팀 브리핑', time: '30분' },
                         { id: '2-3', title: 'PMM 팀 브리핑', time: '30분' },
-                        { id: '2-4', title: 'Field&Event 팀 브리핑', time: '30분' },
-                        { id: '2-5', title: 'Digital Performance 팀 브리핑', time: '30분' },
-                        { id: '2-6', title: '주간 회의 관찰 (All Hands)', time: '90분' },
-                        { id: '2-7', title: '마케팅 대시보드 학습', time: '30분' },
-                        { id: '2-8', title: '멘토 체크-인', time: '30분' }
+                        { id: '2-4', title: 'Field&Event 1팀 브리핑', time: '30분' },
+                        { id: '2-5', title: 'Field&Event 2팀 브리핑', time: '30분' },
+                        { id: '2-6', title: 'Digital Performance 팀 브리핑', time: '30분' },
+                        { id: '2-7', title: '주간 회의 관찰 (All Hands)', time: '90분' },
+                        { id: '2-8', title: '마케팅 대시보드 학습', time: '30분' },
+                        { id: '2-9', title: '멘토 체크-인', time: '30분' }
                     ],
                     3: [
                         { id: '3-1', title: '"AI Native Company" 포지셔닝 학습', time: '30분' },
@@ -594,10 +667,14 @@
                     ]
                 },
                 mentors: [
-                    { name: 'Eumenes Sung (성무경)', role: 'Marketing Unit Leader', team: 'Strategy & Ops' },
                     { name: 'Hayley Chung (정혜인)', role: 'CMO', team: 'Leadership' },
-                    { name: 'Brand & Content Lead', role: 'Team Lead', team: 'Brand & Content' },
-                    { name: 'PMM Team Lead', role: 'Team Lead', team: 'PMM' }
+                    { name: 'Eumenes Sung (성무경)', role: 'Marketing Unit Leader', team: 'Strategy & Ops' },
+                    { name: 'Keira Park (박민지)', role: 'Brand & Content Leader', team: 'Brand & Content' },
+                    { name: 'Jin Younghee (진영희)', role: 'Field & Event 1 Team Leader', team: 'Field & Event' },
+                    { name: 'Lydia Kim (김수경)', role: 'Field & Event 2 Team Leader', team: 'Field & Event' },
+                    { name: 'Kim Chan-hee (김찬희)', role: 'Digital Performance Leader', team: 'Digital Performance' },
+                    { name: 'Song Young-hoon (송영훈)', role: 'Creative Studio Leader', team: 'Creative Studio' },
+                    { name: 'Mina Baek (백경민)', role: 'Video Lab', team: 'Video Lab' }
                 ],
                 teams: [
                     { name: 'Strategy & Ops', desc: '마케팅 전체 전략, 데이터 기반 의사결정, 효율적 운영', color: '#3b82f6' },
@@ -665,11 +742,12 @@
                         { id: '2-1', title: 'Strategy & Ops Team Briefing', time: '30 min' },
                         { id: '2-2', title: 'Brand & Content Team Briefing', time: '30 min' },
                         { id: '2-3', title: 'PMM Team Briefing', time: '30 min' },
-                        { id: '2-4', title: 'Field & Event Team Briefing', time: '30 min' },
-                        { id: '2-5', title: 'Digital Performance Team Briefing', time: '30 min' },
-                        { id: '2-6', title: 'Observe Weekly Meetings', time: '90 min' },
-                        { id: '2-7', title: 'Learn Marketing Dashboard', time: '30 min' },
-                        { id: '2-8', title: 'Mentor Check-in', time: '30 min' }
+                        { id: '2-4', title: 'Field & Event Team 1 Briefing', time: '30 min' },
+                        { id: '2-5', title: 'Field & Event Team 2 Briefing', time: '30 min' },
+                        { id: '2-6', title: 'Digital Performance Team Briefing', time: '30 min' },
+                        { id: '2-7', title: 'Observe Weekly Meetings', time: '90 min' },
+                        { id: '2-8', title: 'Learn Marketing Dashboard', time: '30 min' },
+                        { id: '2-9', title: 'Mentor Check-in', time: '30 min' }
                     ],
                     3: [
                         { id: '3-1', title: '"AI Native Company" Positioning', time: '30 min' },
@@ -690,10 +768,14 @@
                     ]
                 },
                 mentors: [
-                    { name: 'Eumenes Sung', role: 'Marketing Unit Leader', team: 'Strategy & Ops' },
                     { name: 'Hayley Chung', role: 'CMO', team: 'Leadership' },
-                    { name: 'Brand & Content Lead', role: 'Team Lead', team: 'Brand & Content' },
-                    { name: 'PMM Team Lead', role: 'Team Lead', team: 'PMM' }
+                    { name: 'Eumenes Sung', role: 'Marketing Unit Leader', team: 'Strategy & Ops' },
+                    { name: 'Keira Park', role: 'Brand & Content Leader', team: 'Brand & Content' },
+                    { name: 'Jin Younghee', role: 'Field & Event 1 Team Leader', team: 'Field & Event' },
+                    { name: 'Lydia Kim', role: 'Field & Event 2 Team Leader', team: 'Field & Event' },
+                    { name: 'Kim Chan-hee', role: 'Digital Performance Leader', team: 'Digital Performance' },
+                    { name: 'Song Young-hoon', role: 'Creative Studio Leader', team: 'Creative Studio' },
+                    { name: 'Mina Baek', role: 'Video Lab', team: 'Video Lab' }
                 ],
                 teams: [
                     { name: 'Strategy & Ops', desc: 'Overall marketing strategy, data-driven decisions, efficient operations', color: '#3b82f6' },
@@ -934,19 +1016,122 @@
         function openFeedbackModal() {
             const t = content[language];
             document.getElementById('feedbackText').placeholder = t.feedbackPlaceholder;
+            document.getElementById('feedbackNameLabel').innerText = language === 'ko' ? '이름' : 'Name';
+            document.getElementById('feedbackEmailLabel').innerText = language === 'ko' ? '이메일' : 'Email';
+            document.getElementById('feedbackMentorLabel').innerText = language === 'ko' ? '멘토' : 'Mentor';
+            document.getElementById('feedbackContentLabel').innerText = language === 'ko' ? '피드백 내용' : 'Feedback Content';
+
+            // 멘토 드롭다운 초기화
+            const mentorSelect = document.getElementById('feedbackMentor');
+            const mentors = [
+                { ko: '헤일리(정혜인) - CMO', en: 'Hayley Chung - CMO' },
+                { ko: '성무경 - 마케팅 유닛 리더', en: 'Eumenes Sung - Marketing Unit Leader' },
+                { ko: '박민지 - 브랜드 & 컨텐츠 리더', en: 'Keira Park - Brand & Content Leader' },
+                { ko: '진영희 - 필드이벤트 1팀 리더', en: 'Jin Younghee - Field & Event 1 Team Leader' },
+                { ko: '김수경 - 필드이벤트 2팀 리더', en: 'Lydia Kim - Field & Event 2 Team Leader' },
+                { ko: '김찬희 - 디지털퍼포먼스 리더', en: 'Kim Chan-hee - Digital Performance Leader' },
+                { ko: '송영훈 - 크리에이티브 스튜디오 리더', en: 'Song Young-hoon - Creative Studio Leader' },
+                { ko: '백경민 - 비디오랩', en: 'Mina Baek - Video Lab' }
+            ];
+
+            // 기존 옵션 제거 (선택안함 제외)
+            while (mentorSelect.options.length > 1) {
+                mentorSelect.remove(1);
+            }
+
+            // 멘토 옵션 추가
+            mentors.forEach(mentor => {
+                const option = document.createElement('option');
+                option.value = language === 'ko' ? mentor.ko : mentor.en;
+                option.text = language === 'ko' ? mentor.ko : mentor.en;
+                mentorSelect.appendChild(option);
+            });
+
+            // 에러 메시지 숨기기
+            document.getElementById('feedbackError').style.display = 'none';
+            document.getElementById('feedbackSubmitting').style.display = 'none';
+
             document.getElementById('feedbackModal').classList.add('active');
         }
 
         function closeFeedbackModal() {
             document.getElementById('feedbackModal').classList.remove('active');
+            // 폼 초기화
+            document.getElementById('feedbackName').value = '';
+            document.getElementById('feedbackEmail').value = '';
+            document.getElementById('feedbackMentor').value = '';
+            document.getElementById('feedbackText').value = '';
+            document.getElementById('feedbackError').style.display = 'none';
+            document.getElementById('feedbackSubmitting').style.display = 'none';
         }
 
-        function submitFeedback() {
-            const feedback = document.getElementById('feedbackText').value;
-            if (feedback.trim()) {
-                alert(language === 'ko' ? '피드백이 전송되었습니다!' : 'Feedback submitted!');
-                document.getElementById('feedbackText').value = '';
+        async function submitFeedback() {
+            const name = document.getElementById('feedbackName').value.trim();
+            const email = document.getElementById('feedbackEmail').value.trim();
+            const mentor = document.getElementById('feedbackMentor').value.trim();
+            const content = document.getElementById('feedbackText').value.trim();
+            const errorDiv = document.getElementById('feedbackError');
+            const submittingDiv = document.getElementById('feedbackSubmitting');
+
+            // 폼 검증
+            if (!name) {
+                errorDiv.innerText = language === 'ko' ? '이름을 입력해주세요.' : 'Please enter your name.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (!email) {
+                errorDiv.innerText = language === 'ko' ? '이메일을 입력해주세요.' : 'Please enter your email.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                errorDiv.innerText = language === 'ko' ? '유효한 이메일을 입력해주세요.' : 'Please enter a valid email.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (!content) {
+                errorDiv.innerText = language === 'ko' ? '피드백 내용을 입력해주세요.' : 'Please enter feedback content.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // 제출 중 상태 표시
+            submittingDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        mentor: mentor || (language === 'ko' ? '선택안함' : 'Not specified'),
+                        content: content
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || (language === 'ko' ? '피드백 제출에 실패했습니다.' : 'Failed to submit feedback.'));
+                }
+
+                // 성공 메시지 표시
+                submittingDiv.style.display = 'none';
+                alert(language === 'ko' ? '피드백이 성공적으로 제출되었습니다! 감사합니다.' : 'Your feedback has been submitted successfully! Thank you.');
                 closeFeedbackModal();
+
+            } catch (error) {
+                console.error('Feedback submission error:', error);
+                submittingDiv.style.display = 'none';
+                errorDiv.innerText = error.message || (language === 'ko' ? '피드백 제출 중 오류가 발생했습니다. 다시 시도해주세요.' : 'An error occurred. Please try again.');
+                errorDiv.style.display = 'block';
             }
         }
 

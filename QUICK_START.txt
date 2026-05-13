@@ -1,0 +1,55 @@
+🚀 MegazoneCloud 온보딩 플랫폼 - 빠른 배포 (1분)
+
+【배포 3단계】
+
+1️⃣ GitHub에 코드 업로드 (30초)
+   - https://github.com/new
+   - Repository name: megazone-onboarding
+   - Add files → Upload files
+   - 아래 3개 파일 업로드:
+     ✓ index.html
+     ✓ package.json
+     ✓ vercel.json
+
+2️⃣ Vercel에서 배포 (20초)
+   - https://vercel.com/new
+   - "Import Git Repository"
+   - megazone-onboarding 선택
+   - Import 클릭
+   - 자동 배포 시작
+
+3️⃣ 배포 URL 확인 (10초)
+   - Vercel 대시보드에 파란색 "Visit" 버튼
+   - 클릭하면 온보딩 플랫폼 접속!
+   - 예: https://megazone-onboarding.vercel.app
+
+【완료 후】
+
+신규입사자에게 배포 URL 공유:
+👉 https://megazone-onboarding.vercel.app
+
+【필수 체크 사항】
+
+✅ GitHub 계정 있음? (없으면 1분에 생성)
+✅ Vercel 계정? (GitHub으로 로그인 가능)
+✅ 3개 파일 준비됨? (vercel-onboarding 폴더 참고)
+
+【주의사항】
+
+- 파일명 대소문자 정확히 (index.html, 소문자)
+- 파일 3개 모두 업로드 필수
+- package.json과 vercel.json도 필수
+
+【도움말】
+
+파일 내용이 필요하면:
+- VERCEL_DEPLOYMENT_GUIDE.md 참고
+- 또는 vercel-onboarding 폴더의 파일들 직접 사용
+
+【예상 배포 시간】
+
+- GitHub 업로드: 30초
+- Vercel 배포: 1-2분
+- 총 소요: 3분
+
+준비 완료! 배포하러 가세요! 🎉
